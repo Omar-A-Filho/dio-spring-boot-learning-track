@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PersistTransactionUseCase {
+
     private final TransactionRepository transactionRepository;
 
     public PersistTransactionUseCase(TransactionRepository transactionRepository) {
@@ -17,6 +18,11 @@ public class PersistTransactionUseCase {
 
     @Tool(name = "persist-transaction", description = "Persiste uma nova transação financeira")
     public TransactionOutput execute(PersistTransactionInput input) {
+
+        if (input.amount() <= 0) {
+            throw new IllegalArgumentException("O valor da transação deve ser maior que zero.");
+        }
+
         var transaction = transactionRepository.save(
                 new Transaction(input.description(), input.amount(), input.category()));
 
